@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body onload="loadNotes()">
+    <div id="notes">
+
+    </div>
+    <button onclick="addNote()">Add note</button>
+
+    <script>
+        let noteHolder = document.getElementById("notes")
+
+        function addNote(){
+            noteHolder.innerHTML += `
+                                    <div class="note-container">
+                                        <textarea></textarea> 
+                                        <button onclick="removeNote(this)">X</button>
+                                        <button onclick="saveNote(this)">Save notes</button>
+                                    </div>
+                                    `;
+        }
+        function removeNote(buttonElement) {
+            const div = buttonElement.parentElement;
+            const note = div.querySelector('textarea')
+            $.ajax({
+                method: `/removeNote/${note}`,
+                type: "post",
+                success: function(msg){
+                    console.log(msg)
+                },
+                error: function(msg){
+                    console.log(msg)
+                }
+            })
+            div.remove();
+        }
+
+        function saveNote(btn){
+            const div = btn.parentElement;
+            const note = div.querySelector('textarea')
+            $.ajax({
+                method: `/saveNotes/${note}`,
+                type: "post",
+                success: function(msg){
+                    console.log(msg)
+                },
+                error: function(msg){
+                    console.log(msg)
+                }
+            })
+        }
+
+        function loadNotes(){
+            $.ajax({
+                method : "/getNotes",
+                type: "get",
+                success: function(notes) {
+                    notes.forEach(noteText => {
+                            noteHolder.insertAdjacentHTML('beforeend', `
+                                <div class="note-container">
+                                    <textarea>${noteText}</textarea>
+                                    <button onclick="removeNote(this)">X</button>
+                                </div>
+                            `);
+                        });
+                }
+            })
+        }
+    </script>
+</body>
+</html>
