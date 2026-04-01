@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body onload="setupPage()">
+    <h1>Your account</h1>
+
+    <h2>Posts:</h2>
+    <div id="posts">
+
+    </div>
+
+
+    <h2>Create a post:</h2>
+    <form method="post" action="/createPost" enctype="multipart/form-data">
+        <textarea name="text"></textarea><br>
+        <input name="image" placeholder="Image link"> <br>
+        <button type="submit">Upload</button>
+    </form>
+
+    <script>
+        postDiv = document.getElementById("posts")
+        function setupPage() {
+            $.ajax({
+                url: "/getUserPosts",
+                method: "GET",
+                success: function(posts){
+                    posts.forEach(element => {
+                        console.log(element)
+                        postDiv.innerHTML += `
+                        <h4>You</h4>
+                        <p>${element[0]}</p>
+                        <img src="${element[1]}">
+                        `
+                    });
+                }
+            })
+        }
+    </script>
+</body>
+</html>
