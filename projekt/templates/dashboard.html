@@ -26,9 +26,9 @@
         }
         function removeNote(buttonElement) {
             const div = buttonElement.parentElement;
-            const note = div.querySelector('textarea')
+            const note = div.querySelector('textarea').value
             $.ajax({
-                method: `/removeNote/${note}`,
+                url: `/removeNote/${note}`,
                 type: "post",
                 success: function(msg){
                     console.log(msg)
@@ -42,9 +42,10 @@
 
         function saveNote(btn){
             const div = btn.parentElement;
-            const note = div.querySelector('textarea')
+            const note = div.querySelector('textarea').value
+            console.log(note)
             $.ajax({
-                method: `/saveNotes/${note}`,
+                url: `/saveNote/${note}`,
                 type: "post",
                 success: function(msg){
                     console.log(msg)
@@ -57,7 +58,7 @@
 
         function loadNotes(){
             $.ajax({
-                method : "/getNotes",
+                url : "/getNotes",
                 type: "get",
                 success: function(notes) {
                     notes.forEach(noteText => {
@@ -65,6 +66,7 @@
                                 <div class="note-container">
                                     <textarea>${noteText}</textarea>
                                     <button onclick="removeNote(this)">X</button>
+                                    <button onclick="saveNote(this)">Save notes</button>
                                 </div>
                             `);
                         });

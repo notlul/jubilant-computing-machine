@@ -51,11 +51,12 @@ def saveNote(note):
     user = session["user"]
     if not user:
         return redirect("/login")
+    print(note)
     userData = users.get(User.username == user)
     notes = userData.get("notes", [])
     notes.append(note)
     users.update({'notes': notes}, User.username == user)
-
+    return "OK"
 @app.route("/removeNote/<note>", methods = ["POST"])
 def removeNote(note):
     user = session["user"]
@@ -63,8 +64,10 @@ def removeNote(note):
         return redirect("/login")
     userData = users.get(User.username == user)
     notes = userData.get("notes", [])
+    print(note)
     notes.remove(note)
     users.update({'notes': notes}, User.username == user)
+    return "OK"
 
 @app.route("/getNotes", methods = ["GET"])
 def getNotes():
@@ -72,6 +75,7 @@ def getNotes():
     if not user:
         return redirect("/login")
     notes = users.get(User.username == user).get("notes", [])
+    print(jsonify(notes))
     return jsonify(notes)
 if __name__ == "__main__":
     app.run(debug=True)
