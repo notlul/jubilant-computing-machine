@@ -47,24 +47,32 @@ def dashboard():
         return redirect("/login")
     return render_template("dashboard.html")
 
-@app.route("/createPost", methods = ["POST"])
+@app.route("/createPost", methods=["POST"])
 def saveNote():
-    user = session["user"]
+    user = session.get("user")
     if not user:
         return redirect("/login")
-    currPost = []
+
     text = request.form.get("text")
     img = request.form.get("image")
-    currPost.append(text)
-    currPost.append(img)
+    currPost = [text, img]
+
     userData = users.get(User.username == user)
     notes = userData.get("posts", [])
-    allPosts = posts.get("posts", [])
-    allPosts.append(currPost)
     notes.append(currPost)
     users.update({'posts': notes}, User.username == user)
-    posts.update({'allPosts': notes})
+
+    posts.insert({
+        "username": user,
+        "content": currPost
+    })
+    
     return "OK"
+
+@app.route("/getPosts", methods=["GET"])
+def getPosts():
+    all_records = posts.all()
+    return jsonify(all_records)
 
 @app.route("/getUserPosts", methods = ["GET"])
 def getUserPosts():
@@ -72,8 +80,13 @@ def getUserPosts():
     if not user:
         return redirect("/login")
     userData = users.get(User.username == user)
-    posts = userData.get("posts", [])
-    print(posts)
-    return jsonify(posts)
+    allposts = userData.get("posts", [])
+    print(allposts)
+    return jsonify(allposts)
+
+@app.route("/posts")
+def allPosts():
+    return render_template("posts.html")
+
 if __name__ == "__main__":
     app.run(debug=True)
