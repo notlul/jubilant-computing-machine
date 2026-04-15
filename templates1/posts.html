@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Feed</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen p-4 md:p-8 font-sans" onload="loadPosts()">
+
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-3xl font-extrabold text-gray-900 mb-8 border-b pb-4">Latest Posts</h1>
+        
+        <div id="posts" class="space-y-6">
+            </div>
+    </div>
+
+    <script>
+        const psts = document.getElementById("posts")
+        
+        function loadPosts(){
+            $.ajax({
+                url: "/getPosts",
+                method: "GET",
+                success: function(posts){
+                    console.log(posts)
+                    posts.forEach(element => {
+                        // Creating a card for every post
+                        psts.innerHTML += `
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                            <div class="p-4 bg-gray-50 border-b border-gray-100">
+                                <h2 class="font-bold text-indigo-600 text-lg">@${element.username}</h2>
+                            </div>
+                            <div class="p-4">
+                                <p class="text-gray-700 text-base leading-relaxed mb-4">${element.content[0]}</p>
+                                ${element.content[1] ? `
+                                    <img src="${element.content[1]}" 
+                                         class="w-full h-auto rounded-lg shadow-inner object-cover max-h-96" 
+                                         alt="Post image">
+                                ` : ''}
+                            </div>
+                        </div>
+                        `
+                    });
+                },
+                error: function(error){
+                    console.log(error)
+                    psts.innerHTML = `<p class="text-red-500">Failed to load posts.</p>`
+                }
+            })
+        }
+    </script>
+
+</body>
+</html>

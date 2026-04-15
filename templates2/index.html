@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}">
+    <title>Would you rather</title>
+</head>
+<body>
+    <a href="/register">Register</a>
+    <a href="/login">Login</a>
+    <a href="/logout">Logout</a>
+    <p id="displayName">Nalaganje...</p>
+
+    <div id="question-container">
+        <button id="g1" class="btn-choice" onclick="choice1()">Možnost 1</button>
+        <button id="g2" class="btn-choice" onclick="choice2()">Možnost 2</button>
+    </div>
+
+    <div class="nav-bar">
+        <button class="refresh-btn" onclick="getQuestion()">Naslednje vprašanje</button>
+        <button class="refresh-btn" onclick="genQuestion()">Generiraj vprašanje</button>
+        <button id="create-link" onclick="window.location.href='/creator'">Dodaj svoje</button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='scripts/main.js') }}"></script>
+</body>
+</html>

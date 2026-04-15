@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-sm">
+        <h2 class="text-2xl font-bold text-gray-800 mb-2 text-center">Create Account</h2>
+        <p class="text-gray-500 text-sm text-center mb-6">Join the community today</p>
+        
+        <form action="/register" method="post" class="flex flex-col gap-4">
+            <input id="user" name="user" placeholder="Username" 
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none transition">
+            
+            <input id="pass" name="pass" type="password" placeholder="Password" 
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none transition">
+            
+            <button type="submit" 
+                class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition duration-200 shadow-md">
+                Register
+            </button>
+        </form>
+
+        <div class="mt-6 text-center border-t pt-4">
+            <a href="/login" class="text-green-600 hover:text-green-800 text-sm font-medium transition">
+                Already have an account? Login
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

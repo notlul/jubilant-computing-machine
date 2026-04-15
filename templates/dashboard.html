@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-6 font-sans" onload="loadNotes()">
+
+    <div class="max-w-6xl mx-auto">
+        <div class="flex justify-between items-center mb-10">
+            <h1 class="text-3xl font-bold text-gray-800">My Dashboard</h1>
+            <button onclick="addNote()" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-full shadow-lg transition-transform active:scale-95">
+                + Add note
+            </button>
+        </div>
+
+        <div id="notes" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
+    </div>
+
+    <script>
+        let noteHolder = document.getElementById("notes")
+
+        function addNote(){
+            // Added Tailwind classes to the injected HTML
+            noteHolder.insertAdjacentHTML('beforeend', `
+                <div class="note-container bg-yellow-200 p-4 rounded-lg shadow-md border-t-8 border-yellow-400 flex flex-col h-64 relative">
+                    <button onclick="removeNote(this)" class="absolute top-2 right-2 text-yellow-700 hover:text-red-600 font-bold text-xl">
+                        &times;
+                    </button>
+                    <textarea class="bg-transparent w-full flex-grow p-2 focus:outline-none text-yellow-900 resize-none font-medium placeholder-yellow-600/50" placeholder="Type something..."></textarea> 
+                    <button onclick="saveNote(this)" class="mt-2 text-xs bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold py-1 px-3 rounded self-end transition">
+                        Save note
+                    </button>
+                </div>
+            `);
+        }
+
+        function removeNote(buttonElement) {
+            const div = buttonElement.parentElement;
+            const note = div.querySelector('textarea').value
+            $.ajax({
+                url: `/removeNote/${note}`,
+                type: "post",
+                success: function(msg){ console.log(msg) },
+                error: function(msg){ console.log(msg) }
+            })
+            div.remove();
+        }
+
+        function saveNote(btn){
+            const div = btn.parentElement;
+            const note = div.querySelector('textarea').value
+            console.log(note)
+            $.ajax({
+                url: `/saveNote/${note}`,
+                type: "post",
+                success: function(msg){ console.log(msg) },
+                error: function(msg){ console.log(msg) }
+            })
+        }
+
+        function loadNotes(){
+            $.ajax({
+                url : "/getNotes",
+                type: "get",
+                success: function(notes) {
+                    notes.forEach(noteText => {
+                        noteHolder.insertAdjacentHTML('beforeend', `
+                            <div class="note-container bg-yellow-200 p-4 rounded-lg shadow-md border-t-8 border-yellow-400 flex flex-col h-64 relative">
+                                <button onclick="removeNote(this)" class="absolute top-2 right-2 text-yellow-700 hover:text-red-600 font-bold text-xl">
+                                    &times;
+                                </button>
+                                <textarea class="bg-transparent w-full flex-grow p-2 focus:outline-none text-yellow-900 resize-none font-medium">${noteText}</textarea>
+                                <button onclick="saveNote(this)" class="mt-2 text-xs bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold py-1 px-3 rounded self-end transition">
+                                    Save note
+                                </button>
+                            </div>
+                        `);
+                    });
+                }
+            })
+        }
+    </script>
+</body>
+</html>
