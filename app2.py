@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify, session, redirect
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import random
 import ollama
@@ -17,7 +18,8 @@ db = SQLAlchemy(app)
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(80), nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+    code = db.Column(db.String(80), nullable=False)
 
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -54,7 +56,7 @@ def login():
     if user:
         session["user"] = username
         return redirect("/")
-    return "Invalid Credentials", 401
+    return jsonify("Invalid")
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -63,13 +65,32 @@ def register():
     
     username = request.form.get("user")
     psw = request.form.get("pass")
-    
+    code = request.form.get("code")
+    psw = generate_password_hash(psw)
     if not User.query.filter_by(username=username).first():
-        new_user = User(username=username, password=psw)
+        new_user = User(username=username, password=psw, code=code)
         db.session.add(new_user)
         db.session.commit()
         return redirect("/login")
     return render_template("register.html")
+@app.route("/resetPassword", methods=["GET", "POST"])
+def resetPassword():
+    if request.method == "GET":
+        return render_template("resetPassword.html")
+    username = request.form.get("user")
+    new_password = request.form.get("pass")
+    code = request.form.get("code")
+    new_password = generate_password_hash(new_password)
+    user = User.query.filter_by(username=username, code=code).first()
+
+    if user:
+        user.password = new_password
+
+        db.session.commit()
+
+        return redirect("/login")
+
+    return jsonify("Wrong code.")
 
 @app.route("/logout")
 def logout():
