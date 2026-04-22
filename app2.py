@@ -51,9 +51,12 @@ def login():
     
     username = request.form.get("user")
     psw = request.form.get("pass")
-    
-    user = User.query.filter_by(username=username, password=psw).first()
-    if user:
+    user = User.query.filter_by(username=username).first()
+    psw = check_password_hash(user.password, psw)
+    print(psw)
+
+    user = User.query.filter_by(username=username).first()
+    if user and psw:
         session["user"] = username
         return redirect("/")
     return jsonify("Invalid")
